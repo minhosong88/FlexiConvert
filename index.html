@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style>
+            /* Global Styles */
+            body {
+                font-family: 'Arial', sans-serif;
+                background-color: #f0f2f5;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+
+            h1 {
+                color: #333;
+                margin-bottom: 20px;
+            }
+
+            /* Shared Styles */
+            .container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                background-color: #ffffff;
+                border-radius: 12px;
+                width: 350px;
+                margin: 0 auto;
+                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+                transition: box-shadow 0.3s ease;
+            }
+
+            .container:hover {
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            }
+
+            .input-group {
+                margin-bottom: 15px;
+                width: 100%;
+            }
+
+            .label {
+                margin-bottom: 5px;
+                font-weight: bold;
+                color: #555;
+            }
+
+            .input {
+                padding: 10px;
+                border-radius: 8px;
+                border: 1px solid #ddd;
+                width: calc(100% - 20px);
+                margin: 0 10px;
+                font-size: 14px;
+                transition: border-color 0.3s ease;
+            }
+
+            .input:focus {
+                border-color: #007bff;
+                outline: none;
+            }
+
+            .button {
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 14px;
+                margin-top: 10px;
+                transition: background-color 0.3s ease;
+            }
+
+            .button:hover {
+                background-color: #0056b3;
+            }
+
+            select {
+                padding: 10px;
+                border-radius: 8px;
+                border: 1px solid #ddd;
+                font-size: 14px;
+                margin-bottom: 20px;
+                transition: border-color 0.3s ease;
+            }
+
+            select:focus {
+                border-color: #007bff;
+                outline: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script src="https://www.unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+        <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+        <script type="text/babel">
+            const root = document.getElementById("root");
+
+            function TimeConverter() {
+                const [amount, setAmount] = React.useState(0);
+                const [inverted, setInverted] = React.useState(false);
+                const onChange = (event) => setAmount(event.target.value);
+                const reset = () => setAmount(0);
+                const onInvert = () => {
+                    reset();
+                    setInverted((current) => !current);
+                };
+
+                return (
+                    <div className="container">
+                        <div className="input-group">
+                            <label className="label" htmlFor="minutes">Minutes</label>
+                            <input 
+                                className="input"
+                                value={inverted ? amount * 60 : amount} 
+                                id="minutes" 
+                                placeholder="Enter minutes" 
+                                type="number" 
+                                onChange={onChange}
+                                disabled={inverted}
+                            />
+                        </div>
+                        <div className="input-group">
+                            <label className="label" htmlFor="hours">Hours</label>
+                            <input
+                                className="input"
+                                value={inverted ? amount : amount / 60} 
+                                id="hours" 
+                                placeholder="Enter hours" 
+                                type="number"
+                                onChange={onChange}
+                                disabled={!inverted}
+                            />
+                        </div>
+                        <button className="button" onClick={reset}>Reset</button>
+                        <button className="button" onClick={onInvert}>
+                            {inverted ? "Convert to Hours" : "Convert to Minutes"}
+                        </button>
+                    </div> 
+                );
+            }
+
+            function DistanceConverter() {
+                const [distance, setDistance] = React.useState(0);
+                const [selectedUnit, setSelected] = React.useState("miles");
+                const onChange = (event) => setDistance(event.target.value);
+                const reset = () => setDistance(0);
+                const onSelected = (unit) => {
+                    reset();
+                    setSelected(unit);
+                };
+
+                const DistanceConversionFactors = {
+                    miles: {
+                        miles: 1,
+                        kilometers: 1.60934,
+                        meters: 1609.34,
+                        yards: 1760,
+                        feet: 5280,
+                        inches: 63360,
+                    },
+                    kilometers: {
+                        miles: 0.621371,
+                        kilometers: 1,
+                        meters: 1000,
+                        yards: 1093.61,
+                        feet: 3280.84,
+                        inches: 39370.1,
+                    },
+                    meters: {
+                        miles: 0.000621371,
+                        kilometers: 0.001,
+                        meters: 1,
+                        yards: 1.09361,
+                        feet: 3.28084,
+                        inches: 39.3701,
+                    },
+                    yards: {
+                        miles: 0.000568182,
+                        kilometers: 0.0009144,
+                        meters: 0.9144,
+                        yards: 1,
+                        feet: 3,
+                        inches: 36,
+                    },
+                    feet: {
+                        miles: 0.000189394,
+                        kilometers: 0.0003048,
+                        meters: 0.3048,
+                        yards: 0.333333,
+                        feet: 1,
+                        inches: 12,
+                    },
+                    inches: {
+                        miles: 1.5783e-5,
+                        kilometers: 2.54e-5,
+                        meters: 0.0254,
+                        yards: 0.0277778,
+                        feet: 0.0833333,
+                        inches: 1,
+                    },
+                };
+
+                const convertDistance = (targetUnit) => distance * DistanceConversionFactors[selectedUnit][targetUnit];
+
+                return (
+                    <div className="container">
+                        {Object.keys(DistanceConversionFactors).map((unit) => (
+                            <div className="input-group" key={unit}>
+                                <label className="label" onClick={() => onSelected(unit)}>
+                                    {unit.charAt(0).toUpperCase() + unit.slice(1)}
+                                </label>
+                                <input
+                                    className="input"
+                                    value={selectedUnit === unit ? distance : convertDistance(unit)}
+                                    id={unit}
+                                    placeholder={`Enter ${unit}`}
+                                    type="number"
+                                    onChange={onChange}
+                                    disabled={selectedUnit !== unit}
+                                />
+                            </div>
+                        ))}
+                        <button className="button" onClick={reset}>Reset</button>
+                    </div>
+                );
+            }
+            function AreaConverter() {
+                const [area, setArea] = React.useState(0);
+                const [selectedUnit, setSelected] = React.useState("square meter");
+                const onChange = (event) => setArea(event.target.value);
+                const reset = () => setArea(0);
+                const onSelected = (unit) => {
+                    reset();
+                    setSelected(unit);
+                };
+
+                const areaConversionFactors = {
+                    'square meter': {
+                        'square meter': 1,
+                        'acre': 1 / 4046.8564224,
+                        'square feet': 10.7639,
+                        'hectare': 1 / 10000,
+                        '평': 1 / 3.305785,
+                    },
+                    'acre': {
+                        'square meter': 4046.8564224,
+                        'acre': 1,
+                        'square feet': 43560,
+                        'hectare': 0.40468564224,
+                        '평': 1224.17,
+                    },
+                    'square feet': {
+                        'square meter': 0.092903,
+                        'acre': 1 / 43560,
+                        'square feet': 1,
+                        'hectare': 1 / 107639.104,
+                        '평': 1 / 35.583,
+                    },
+                    'hectare': {
+                        'square meter': 10000,
+                        'acre': 2.47105,
+                        'square feet': 107639.104,
+                        'hectare': 1,
+                        '평': 3025,
+                    },
+                    '평': { // Pyeong, a Korean unit of area
+                        'square meter': 3.305785,
+                        'acre': 1 / 1224.17,
+                        'square feet': 35.583,
+                        'hectare': 1 / 3025,
+                        '평': 1,
+                    },
+                };
+
+                const areaSymbols = {
+                    'square meter': 'm²',
+                    'acre': 'ac',
+                    'square feet': 'ft²',
+                    'hectare': 'ha',
+                    '평': '평',
+                };
+                
+                const convertArea = (targetUnit) => area * areaConversionFactors[selectedUnit][targetUnit];
+
+                return (
+                    <div  className="container">
+                        {Object.keys(areaConversionFactors).map((unit) => (
+                            <div className="input-group" key={unit}>
+                                <label className="label" onClick={() => onSelected(unit)}>
+                                    {areaSymbols[unit]}
+                                </label>
+                                <input
+                                    className="input"
+                                    value={selectedUnit === unit ? area : convertArea(unit)}
+                                    id={unit}
+                                    placeholder={`Enter ${unit}`}
+                                    type="number"
+                                    onChange={onChange}
+                                    disabled={selectedUnit !== unit}
+                                 />
+                            </div>
+                        ))}
+                        <button className="button" onClick={reset}>Reset</button>
+                    </div>
+                );
+
+
+            }
+            function App() {
+                const [index, setIndex] = React.useState("-1");
+                const onSelect = (event) => setIndex(event.target.value);
+
+                return (
+                    <div style={{ textAlign: 'center' }}>
+                        <h1>Super Converter</h1>
+                        <span> Click the label to change unit</span>
+                        <select value={index} onChange={onSelect} className="input">
+                            <option value="-1">Select a unit converter</option>
+                            <option value="0">Time Converter</option>
+                            <option value="1">Distance Converter</option>
+                            <option value="2">Area Converter</option>
+                        </select>
+                        {index === "0" && <TimeConverter />}
+                        {index === "1" && <DistanceConverter />}
+                        {index === "2" && <AreaConverter />}
+                    </div>
+                );
+            }
+
+            ReactDOM.render(<App />, root);
+        </script>
+    </body>
+</html>
