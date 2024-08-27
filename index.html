@@ -175,7 +175,7 @@
                 return (
                     <div style={{ textAlign: 'center' }}>
                         <h1>Super Converter</h1>
-                        <span> Click the label to change unit</span>
+                        <span hidden = {index === "-1" }> Click the label to change unit</span>
                         <select value={index} onChange={onSelect} className="input">
                             <option value="-1">Select a unit converter</option>
                             <option value="0">Time Converter</option>
