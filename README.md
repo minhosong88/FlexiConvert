@@ -7,6 +7,7 @@
 - **Time Converter**: Convert between seconds, minutes, hours, days, and years.
 - **Distance Converter**: Convert between miles, kilometers, meters, yards, feet, and inches.
 - **Area Converter**: Convert between square meters, acres, square feet, hectares, and 평 (pyeong).
+- **Currency Converter**: Convert between USD, EUR, GBP, KRW, HUF, CZK, JPY
 - **Dynamic Unit Switching**: Click on a unit label to select and change the input field dynamically.
 - **Modern, Intuitive UI**: Built with a clean, responsive design using CSS for optimal user experience.
 
@@ -42,8 +43,6 @@ To run this project locally, follow these steps:
 4. **Reset**: Click the "Reset" button to clear inputs and start a new conversion.
 
 ## Future Enhancements
-
-- **Currency Converter**: Integrate with a currency conversion API for real-time currency conversions.
 - **Weight Converter**: Add conversion capabilities for weight (grams, kilograms, pounds, ounces).
 - **Temperature Converter**: Add functionality to convert between Celsius, Fahrenheit, and Kelvin.
 - **Localization**: Support multiple languages for a broader, global audience.
