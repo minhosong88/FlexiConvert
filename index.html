@@ -168,6 +168,100 @@
             };
             const areaSymbols = { 'square meter': 'm²', 'acre': 'ac', 'square feet': 'ft²', 'hectare': 'ha', '평': '평' };
 
+            function CurrencyConverter(){
+                const [rates, setRates] = React.useState({});
+                const [amount, setAmount] = React.useState(0);
+                const [selectedCurrency, setCurrency] = React.useState('USD');
+                const [loading, setLoading] = React.useState(true);
+
+                const selectedCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'KRW', 'CZK', 'HUF'];
+
+                React.useEffect(()=>{
+                    fetch("https://open.er-api.com/v6/latest/USD")
+                    .then((response) => response.json())
+                    .then(data =>{
+                        console.log(data.rates)
+                        const filteredRates = Object.keys(data.rates)
+                        .filter(currency => selectedCurrencies.includes(currency))
+                        .reduce((obj,key) =>{ 
+                            obj[key]=data.rates[key];
+                            return obj;
+                        }, {})
+                        setRates(filteredRates);
+                        setLoading(false);
+                    })
+                    .catch(error => console.error("Error fetching data:", error));
+                    
+                },[]);
+
+                const onChange = (event) => {
+                    const input = event.target.value.replace(/,/g, '');
+                    setAmount(input);
+                    
+                };
+                const reset = () => setAmount(0);
+                const onSelected = (currency) => {
+                    reset();
+                    setCurrency(currency)
+                };
+
+                const convertCurrency = (targetCurrency) => {
+                    if (amount === '') return '0.00';
+                    return (parseFloat(amount) * (rates[targetCurrency] / rates[selectedCurrency])).toFixed(2);
+                  };
+
+                  const formatNumber = (number) => {
+                    return new Intl.NumberFormat('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }).format(number);
+                  };
+
+                return (
+                    <div className="container">
+                        <h2>Currency Converter</h2>
+                        {loading ? (<p> Loading data...</p>) : (
+                            Object.keys(rates).map((currency) => (
+                            <div className="input-group" key={currency}>
+                                <label className="label" onClick={() => onSelected(currency)}>
+                                    {currency}
+                                </label>
+                                {selectedCurrency === currency ? (
+                                    <input
+                                    className="input"
+                                    value={amount}
+                                    id={currency}
+                                    placeholder={`Enter ${currency}`}
+                                    type="number"
+                                    onChange={onChange}
+                                />
+                                )
+                                    :
+                                (
+                                    <input
+                                    className="input"
+                                    value={formatNumber(convertCurrency(currency))}
+                                    id={currency}
+                                    placeholder={`Enter ${currency}`}
+                                    type="text"
+                                    onChange={onChange}
+                                    disabled
+                                />
+                                )
+                                }
+
+                            </div>
+                            ))
+                        )} 
+                        <button className="button" onClick={reset}>Reset</button>
+                    </div>   
+                          
+                );
+            }    
+
+
+
+
             function App() {
                 const [index, setIndex] = React.useState("-1");
                 const onSelect = (event) => setIndex(event.target.value);
@@ -181,10 +275,14 @@
                             <option value="0">Time Converter</option>
                             <option value="1">Distance Converter</option>
                             <option value="2">Area Converter</option>
+                            <option value="3">Currency Converter</option>
+
                         </select>
                         {index === "0" && <UnitConverter conversionFactors={timeConversionFactors} symbols={timeSymbols} title="Time Converter" />}
                         {index === "1" && <UnitConverter conversionFactors={distanceConversionFactors} symbols={distanceSymbols} title="Distance Converter" />}
                         {index === "2" && <UnitConverter conversionFactors={areaConversionFactors} symbols={areaSymbols} title="Area Converter" />}
+                        {index === "3" && <CurrencyConverter />}
+
                     </div>
                 );
             }
