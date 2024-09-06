@@ -11,7 +11,8 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                height: 100vh;
+                min-height: 100vh; /* Ensure the body takes the full height of the viewport */
+                overflow-y: auto; /* Allow vertical scrolling if necessary*/
             }
 
             h1 {
@@ -101,8 +102,7 @@
         <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
         <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
         <script type="text/babel">
-            const root = document.getElementById("root");
-
+            const root = ReactDOM.createRoot(document.getElementById('root'));
             function UnitConverter({ conversionFactors, symbols, title }) {
                 const [value, setValue] = React.useState(0);
                 const [selectedUnit, setSelectedUnit] = React.useState(Object.keys(conversionFactors)[0]);
@@ -180,7 +180,6 @@
                     fetch("https://open.er-api.com/v6/latest/USD")
                     .then((response) => response.json())
                     .then(data =>{
-                        console.log(data.rates)
                         const filteredRates = Object.keys(data.rates)
                         .filter(currency => selectedCurrencies.includes(currency))
                         .reduce((obj,key) =>{ 
@@ -268,7 +267,7 @@
 
                 return (
                     <div style={{ textAlign: 'center' }}>
-                        <h1>Super Converter</h1>
+                        <h1>FlexiConvert</h1>
                         <span hidden = {index === "-1" }> Click the label to change unit</span>
                         <select value={index} onChange={onSelect} className="input">
                             <option value="-1">Select a unit converter</option>
@@ -286,8 +285,8 @@
                     </div>
                 );
             }
-
-            ReactDOM.render(<App />, root);
+            
+            root.render(<App />, root);
         </script>
     </body>
 </html>
