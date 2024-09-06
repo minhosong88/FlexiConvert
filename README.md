@@ -1,6 +1,6 @@
 # FlexiConvert
 
-**FlexiConvert** is a versatile ReactJS application for converting various units of time, distance, and area. This application provides a user-friendly interface for dynamically switching between units and converting values seamlessly.
+**FlexiConvert** is a versatile ReactJS application for converting various units of time, distance, area, and current exchange. This application provides a user-friendly interface for dynamically switching between units and converting values seamlessly.
 
 ## Features
 
